@@ -1,0 +1,10 @@
+general:
+  iso: ISO_NE  # Could also be 'PJM', 'MISO', etc.
+  max_disk: 10g
+  max_ram: 2g
+
+data_ingestion:
+  enable_weather_data: true
+
+training:
+  training_interval: 6h  # “6 hours”

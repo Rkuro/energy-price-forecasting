@@ -172,3 +172,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Jetbrains
+.idea/
+
+
+# Generated code
+generated_code/
+
+.DS_Store
