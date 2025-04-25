@@ -1,14 +1,15 @@
 from typing import List, Any, Tuple
 import re
 import logging
-from .feature_adapter import FeatureAdapter
-from .horizons import Horizon
+from ..feature_adapter import FeatureAdapter
+from ..horizons import Horizon
 
 log = logging.getLogger(__name__)
 
 class WeatherFeatureAdapter(FeatureAdapter):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.feature_vector_size = 168 # 12 features * 14 days
 
     def can_handle(self, msg_type: str) -> bool:
@@ -121,8 +122,5 @@ class WeatherFeatureAdapter(FeatureAdapter):
         except (TypeError, ValueError):
             return default
 
-    def archive(self, msg: Any) -> Any:
-        pass
-
-    def unarchive(self, data: Any) -> Any:
+    def archive(self, msg: Any) -> None:
         pass

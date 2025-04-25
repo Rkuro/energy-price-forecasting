@@ -7,7 +7,7 @@ import random  # only if simulating data
 from collections import defaultdict
 
 from .feature_adapter import FeatureAdapter
-from .feature_adapter_weather import WeatherFeatureAdapter
+from .adapters.feature_adapter_weather import WeatherFeatureAdapter
 # from .feature_adapter_load import LoadForecastFeatureAdapter
 # from .feature_adapter_generation import GenerationMixFeatureAdapter
 # from .feature_adapter_transmission import TransmissionFeatureAdapter
@@ -40,6 +40,7 @@ class FeatureStoreProcess(mp.Process):
         input_queue: mp.Queue,             # raw data from ingestion
         output_queue: mp.Queue,            # lightweight update handles
         shared_feature_store: Dict[Any, Any],  # manager dict for actual feature storage
+        vectorizers: Dict[str, FeatureAdapter], # A registry of adapters, keyed by message type
     ):
         super().__init__()
         self.config = config
@@ -49,7 +50,7 @@ class FeatureStoreProcess(mp.Process):
         self._stop_event = mp.Event()
 
         # Registry of adapters, keyed by message type
-        self.vectorizers: Dict[str, FeatureAdapter] = {}
+        self.vectorizers: Dict[str, FeatureAdapter] = vectorizers
 
     def stop(self):
         """Signal this process to terminate gracefully."""
@@ -58,26 +59,11 @@ class FeatureStoreProcess(mp.Process):
     def run(self):
         setup_logging()
         log.info("[FeatureStoreProcess] Starting vectorization loop...")
-        self._initialize_vectorizers()
-
         while not self._stop_event.is_set():
             self._read_input_queue()
             time.sleep(0.5)
 
         log.info("[FeatureStoreProcess] Shutting down.")
-
-    def _initialize_vectorizers(self):
-        """
-        Populate self.vectorizers with adapters for each known message type.
-        Extend this as new adapters become available.
-        """
-        self.vectorizers = {
-            "weather": WeatherFeatureAdapter(),
-            # "load_forecast": LoadForecastFeatureAdapter(),
-            # "generation": GenerationMixFeatureAdapter(),
-            # ...
-        }
-        log.info(f"Registered vectorizers for message types: {list(self.vectorizers.keys())}")
 
     def _read_input_queue(self):
         """

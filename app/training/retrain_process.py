@@ -7,12 +7,12 @@ import logging
 
 from app.logging_helper import setup_logging
 
+log = logging.getLogger(__name__)
 
 class RetrainProcess(mp.Process):
 
     def __init__(self,
                  config,
-                 shared_feature_store: Dict[Any, Any],
                  output_queue: mp.Queue):
         super().__init__()
         self.training_interval_seconds = parse(config.training_interval)

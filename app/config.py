@@ -39,6 +39,7 @@ class DataIngestionConfig(BaseModel):
 class TrainingConfig(BaseModel):
     # e.g. '6h', '30m'
     training_interval: str = Field(default="6h")
+    training_data_volume_path: str = Field(default="/data/training")
 
     @property
     def training_interval_seconds(self) -> int:

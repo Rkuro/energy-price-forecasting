@@ -8,3 +8,4 @@ data_ingestion:
 
 training:
   training_interval: 6h  # “6 hours”
+  training_data_volume_path: /data/training

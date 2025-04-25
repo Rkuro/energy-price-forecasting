@@ -1,0 +1,1 @@
+from feature_adapter_weather import WeatherFeatureAdapter

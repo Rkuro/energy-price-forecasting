@@ -1,6 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Tuple
+import os
+import json
+from datetime import datetime, timezone
 from .horizons import Horizon
+from ..config import Config
+
 
 # -----------------------------
 # Abstract FeatureAdapter Base
@@ -11,6 +16,17 @@ class FeatureAdapter(ABC):
     Each subclass handles one input type (e.g., weather, fuel, LMP).
     """
     feature_vector_size: int
+    training_data_volume_path: str
+
+    def __init__(self, config:Config, message_type: str):
+        self.training_data_volume_path = config.training.training_data_volume_path
+        self.message_type = message_type
+
+        # Ensure archive path exists
+        os.makedirs(os.path.join(
+            self.training_data_volume_path,
+            self.message_type
+        ), exist_ok=True)
 
     @abstractmethod
     def can_handle(self, msg_type: str) -> bool:
@@ -23,11 +39,12 @@ class FeatureAdapter(ABC):
         pass
 
     @abstractmethod
-    def archive(self, data: Any) -> Any:
-        """Return an archived format for this message type"""
-        pass
-
-    @abstractmethod
-    def unarchive(self, data: Any) -> Any:
-        """Return an unarchived format for this message type"""
-        pass
+    def archive(self, data: Any) -> None:
+        """Save an archived format for this message type"""
+        with open(
+            os.path.join(self.training_data_volume_path,
+                        self.message_type,
+                         f"{datetime.now(tz=timezone.utc).isoformat()}.json"),
+            "w"
+        ) as output_f:
+            json.dump(data, output_f)
