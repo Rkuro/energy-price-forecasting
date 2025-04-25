@@ -1,7 +1,9 @@
 # Energy Price Forecasting Model
 
 
-# Generating the EIA client
+## Work in Progress (Not functional yet!)
+
+### Generating the EIA client
 
 Run the following to generate the EIA python client bindings from the EIA swagger.
 
